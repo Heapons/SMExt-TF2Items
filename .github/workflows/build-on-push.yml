@@ -1,10 +1,7 @@
 # Builds when a release is published.
 name: Build Workflow
 
-on:
-  push:
-    branches:
-      - main
+on: push
 
 jobs:
   create_release:

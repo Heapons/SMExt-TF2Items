@@ -1,12 +1,15 @@
 # Builds when a release is published.
 name: Build Workflow
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   create_release:
     name: Create release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -37,19 +40,20 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
         target_arch:
+          - x86
           - x86_64
         include:
           - meta_branch: "1.12-dev"
             sm_branch: "1.12-dev"
             spcomp_version: "1.11.x"
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             target_arch: x86
             os_short: linux
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             target_arch: x86_64
             os_short: linux64
 
@@ -67,7 +71,6 @@ jobs:
           sudo apt-get install -y clang g++-multilib
           echo "CC=clang" >> $GITHUB_ENV
           echo "CXX=clang++" >> $GITHUB_ENV
-
       - name: Fetch Metamod:Source ${{ matrix.meta_branch }}
         uses: actions/checkout@v2
         with:
@@ -92,7 +95,6 @@ jobs:
           do
             git clone hl2sdk-proxy-repo -b $sdk hl2sdk-$sdk
           done
-
       - name: Fetch SDK Manifests
         uses: actions/checkout@v2
         with:
@@ -120,7 +122,6 @@ jobs:
         run: |
           python -m pip install wheel
           pip install git+https://github.com/alliedmodders/ambuild
-
       - name: Checkout project
         uses: actions/checkout@v3
         with:
@@ -133,7 +134,6 @@ jobs:
           cd build
           python3 ../configure.py --sdks=tf2 --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource" --symbol-files --enable-optimize --hl2sdk-manifest-path="${{ github.workspace }}/hl2sdk-manifests" --targets ${{ matrix.target_arch }}
           ambuild
-
       - name: Upload Build Artifact
         id: upload-build-artifact
         uses: actions/upload-artifact@v4
@@ -150,9 +150,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             os_short: linux
             package_ext: .tar.gz
 
@@ -172,7 +172,6 @@ jobs:
           pushd package
           tar -czf "../package.${{ matrix.package_ext }}" --owner=0 --group=0 addons
           popd
-
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1

@@ -1,3 +1,13 @@
+> [!NOTE]
+>
+> This project is now archived.
+>
+> This was always just an experimental thing; I never actually used this in any of my own
+> projects.
+>
+> I don't have sufficient motivation to wrestle with AMBuild and whatever flavor of breakage is
+> happening in SourceMod at the time I'm writing this.
+
 # TF2Items
 
 Custom patches on top of [asherkin's TF2Items extension](https://github.com/asherkin/TF2Items).
